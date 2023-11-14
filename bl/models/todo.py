@@ -5,8 +5,7 @@ from .pyobject_id import PyObjectId
 
 class Todo(BaseModel):
     id: Optional[PyObjectId] = Field(alias="_id")
-    name: str
-    creation_date: str
+    todo_name: str
     reminder: str
     responsible: str
 

@@ -14,4 +14,4 @@ def get_logger(logger_name: str = "Root") -> Logger:
 
 
 file_logger: Logger = get_logger("File")
-console_logger: Logger = get_logger()
+logger: Logger = get_logger()

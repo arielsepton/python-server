@@ -1,9 +1,7 @@
-from pydantic import BaseModel, Field
-from datetime import datetime
+from pydantic import BaseModel
 
 
 class TodoSchema(BaseModel):
-    name: str
-    creation_date: datetime = Field(default_factory=datetime.utcnow)
+    todo_name: str
     reminder: str
     responsible: str

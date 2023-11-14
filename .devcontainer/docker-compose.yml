@@ -5,9 +5,7 @@ services:
     volumes:
       - ../..:/workspaces:cached
     command: sleep infinity
-    build: 
-      context: ..
-      dockerfile: .devcontainer/Dockerfile
+    image: mcr.microsoft.com/devcontainers/python:0-3.11
     environment:
       APP_ENV: "prod"
       APP_DEBUG: "False"

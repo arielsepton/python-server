@@ -1,6 +1,6 @@
 {
     "version": 1,
-    "disable_existing_loggers": "False",
+    "disable_existing_loggers": false,
     "formatters": {
       "standard": {
         "format": "%(asctime)s [%(levelname)s]: %(message)s"
@@ -8,7 +8,7 @@
     },
     "handlers": {
       "default": {
-        "level": "DEBUG",
+        "level": "INFO",
         "formatter": "standard",
         "class": "logging.StreamHandler",
         "stream": "ext://sys.stdout"

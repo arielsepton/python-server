@@ -6,8 +6,8 @@ class CustomError(Exception):
 class ConflictError(CustomError):
     pass
 
-class AuthorizationError(CustomError):
+class NotFoundError(CustomError):
     pass
 
-class NotFoundError(CustomError):
+class InternalError(CustomError):
     pass

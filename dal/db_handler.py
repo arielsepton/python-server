@@ -4,8 +4,9 @@ from pydantic import BaseModel
 from bson import ObjectId
 from pymongo.results import InsertOneResult, UpdateResult
 from db_connection import db
-from common import NotFoundError
-
+from common import NotFoundError, InternalError
+from logging import Logger
+from logger import logger
 
 T = TypeVar('T', bound=BaseModel)
 
@@ -13,8 +14,8 @@ T = TypeVar('T', bound=BaseModel)
 class DbHandler(Generic[T]):
     def __init__(self, type_str: str):
         self._collection = db[f"{type_str}_collection"]
+        self._logger: Logger = logger
 
-        # self._logger: Logger = global_logger
 
     async def get_all(self) -> List[T]:
         return [T(**obj) async for obj in self._collection.find()]
@@ -33,12 +34,15 @@ class DbHandler(Generic[T]):
 
 
     async def post(self, obj_data: T) -> T:
-        obj: InsertOneResult = await self._collection.insert_one(obj_data.model_dump(exclude_unset=True))    
+        inserted_obj: InsertOneResult = await self._collection.insert_one(obj_data.model_dump(exclude_unset=True))    
+        obj: dict = await self._collection.find_one({"_id": inserted_obj.inserted_id})    
         if not obj:
-            raise NotFoundError(message=f"{self.type} with id {id} wasn't found.")
+            raise InternalError(message=f"{self.type} creation did not succeed.")
         return T(**obj)
     
     async def delete(self, id: str) -> T:
         obj: T = await self.get(id)   
         await self._collection.delete_one({"_id": ObjectId(id)})
+        self._logger.info(f"{self.type} with id {id} was deleted successfully.")
+        
         return obj

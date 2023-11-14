@@ -1,1 +1,1 @@
-from .exceptions.exceptions import ConflictError, AuthorizationError, NotFoundError
+from .exceptions.exceptions import ConflictError, AuthorizationError, NotFoundError, InternalError
