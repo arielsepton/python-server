@@ -10,8 +10,8 @@ from logger import logger
 
 
 class TodoApi(Resource):
-    def __init__(self):
-        self.controller: Controller = Controller[Todo](type_str="todo")
+    def __init__(self, controller: Controller[Todo], logger: Logger):
+        self.controller: Controller = controller
         self._logger: Logger = logger
 
     async def get(self, id: str):
@@ -21,7 +21,6 @@ class TodoApi(Resource):
     async def post(self, todo_schema: TodoSchema):
         todo: Todo = Todo(todo_name=todo_schema.todo_name, reminder=todo_schema.reminder, responsible=todo_schema.responsible)
         created_todo: Todo = await self.controller.post(todo)
-        print(created_todo.model_dump(exclude_unset=True))
         return JSONResponse(status_code=status.HTTP_200_OK, content=created_todo.model_dump(exclude_unset=True))
     
     async def delete(self, id: str):

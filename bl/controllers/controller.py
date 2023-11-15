@@ -1,16 +1,15 @@
-from typing import List, TypeVar, Generic
-
-from pydantic import BaseModel
+from typing import List, Generic
+from common import T
 from dal import DbHandler
 
-T = TypeVar('T', bound=BaseModel)
 
 class Controller(Generic[T]):
-    def __init__(self, type_str: str):
-        self.db_handler: DbHandler = DbHandler[T](type_str)
-    async def get_all(self, id: str) -> List[T]:
-        return await self.db_handler.get_all(id)
-    
+    def __init__(self, db_handler: DbHandler):
+        self.db_handler: DbHandler = db_handler
+
+    async def get_all(self) -> List[T]:
+        return await self.db_handler.get_all()
+
     async def delete(self, id: str) -> T:
         return await self.db_handler.delete(id)
 
