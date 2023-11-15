@@ -33,19 +33,19 @@ class DbHandler(DbHandlerBase):
         
         if not updated_obj:
             raise NotFoundError(message=f"{self.type_str} with id {id} wasn't found.")
-        return await self.init(obj)
+        return await self.init(updated_obj)
 
     async def post(self, obj_data: T) -> T:
         inserted_obj: InsertOneResult = await self._collection.insert_one(obj_data.model_dump(exclude_unset=True))
         obj: dict = await self._collection.find_one({"_id": inserted_obj.inserted_id})
         
         if not obj:
-            raise InternalError(message=f"{self.model_type.__name__} creation did not succeed.")
+            raise InternalError(message=f"{self.type_str} creation did not succeed.")
         return await self.init(obj)
 
     async def delete(self, id: str) -> T:
         obj: T = await self.get(id)
         await self._collection.delete_one({"_id": ObjectId(id)})
 
-        self._logger.info(f"{self.model_type.__name__} with id {id} was deleted successfully.")
+        self._logger.info(f"{self.type_str} with id {id} was deleted successfully.")
         return obj
