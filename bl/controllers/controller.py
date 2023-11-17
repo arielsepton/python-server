@@ -1,11 +1,11 @@
 from typing import List, Generic
 from common import T
-from dal import DbHandler
+from dal import DbHandlerBase
 
 
 class Controller(Generic[T]):
-    def __init__(self, db_handler: DbHandler):
-        self.db_handler: DbHandler = db_handler
+    def __init__(self, db_handler: DbHandlerBase):
+        self.db_handler: DbHandlerBase = db_handler
 
     async def get_all(self) -> List[T]:
         return await self.db_handler.get_all()

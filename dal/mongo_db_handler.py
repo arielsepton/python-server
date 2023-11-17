@@ -8,32 +8,32 @@ from common import NotFoundError, InternalError, T
 from logging import Logger
 
 
-class DbHandler(DbHandlerBase):
+class MongoDbHandler(DbHandlerBase):
     def __init__(self, type_str: str, logger: Logger):
         self.type_str = type_str
         self._collection = db[f"{self.type_str}_collection"]
         self._logger: Logger = logger
 
     @abstractmethod
-    async def init(self, data: dict) -> T:
+    def init(self, data: dict) -> T:
         pass
     
     async def get_all(self) -> List[T]:
-        return [await self.init(obj) async for obj in self._collection.find()]
+        return [self.init(obj) async for obj in self._collection.find()]
 
     async def get(self, id: str) -> T:
         obj: dict = await self._collection.find_one({"_id": ObjectId(id)})
         
         if not obj:
             raise NotFoundError(message=f"{self.type_str} with id {id} wasn't found.")
-        return await self.init(obj)
+        return self.init(obj)
 
     async def put(self, id: str, obj: T) -> T:
         updated_obj: UpdateResult = await self._collection.find_one_and_update({"_id": ObjectId(id)}, {"$set": obj.model_dump()})
         
         if not updated_obj:
             raise NotFoundError(message=f"{self.type_str} with id {id} wasn't found.")
-        return await self.init(updated_obj)
+        return self.init(updated_obj)
 
     async def post(self, obj_data: T) -> T:
         inserted_obj: InsertOneResult = await self._collection.insert_one(obj_data.model_dump(exclude_unset=True))
@@ -41,7 +41,7 @@ class DbHandler(DbHandlerBase):
         
         if not obj:
             raise InternalError(message=f"{self.type_str} creation did not succeed.")
-        return await self.init(obj)
+        return self.init(obj)
 
     async def delete(self, id: str) -> T:
         obj: T = await self.get(id)

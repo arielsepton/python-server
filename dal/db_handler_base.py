@@ -17,6 +17,10 @@ class DbHandlerBase(ABC):
         pass
     
     @abstractmethod
+    async def put(self, id: str, obj_data: T) -> T:
+        pass
+    
+    @abstractmethod
     async def delete(self, id: str) -> T:
         pass
 

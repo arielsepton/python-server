@@ -1,7 +1,7 @@
 from bl.models.todo import Todo
-from dal.db_handler import DbHandler
+from dal.mongo_db_handler import MongoDbHandler
 
 
-class TodoDBHandler(DbHandler):
-    async def init(self, data: dict) -> Todo:
+class TodoDBHandler(MongoDbHandler):
+    def init(self, data: dict) -> Todo:
         return Todo(**data)
